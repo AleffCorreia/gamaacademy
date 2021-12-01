@@ -7,7 +7,6 @@ const Home: React.FC = () => {
 
     const [isLoad, setIsLoad] = useState(true);
 
-
     return (
         <Container>
             {isLoad ? (

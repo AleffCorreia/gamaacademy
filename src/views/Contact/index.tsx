@@ -1,27 +1,47 @@
-import React, {useState} from 'react';
+import React, { useState, useCallback, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from './style';
+import { api } from '../../services/api';
 
-interface IData{
+interface IData {
     name: string;
     email: string;
 }
 
 const Contact: React.FC = () => {
     const [data, setData] = useState<IData>({} as IData);
+    const [submit, setSubmit] = useState(false);
+
+    const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        api.post('', data).then(response => {
+            if (response.status === 201) {
+                setSubmit(true);
+            }
+        });
+    }, [data]);
 
     return (
         <Container>
             <div className="form-wrapper">
-                <h3>Contact</h3>
-                <p>Name: {data? data.name : ''}</p>
-                <p>Email: {data? data.email : ''}</p>
+                <h2>Contact</h2>
+                <p>Name: {data ? data.name : ''}</p>
+                <p>Email: {data ? data.email : ''}</p>
                 <div className="card">
-                    <form onSubmit={() => {}}>
-                        <input type="text" placeholder="nome" onChange={e => setData({ ...data, name: e.target.value})}/>
-                        <input type="text" placeholder="email"  onChange={e => setData({ ...data, email: e.target.value})}/>
-                        <input type="submit" value="cadastrar" />
-                    </form>
+                    {submit ? (
+                        <div>
+                            <h1>Obrigado pelo envio dos dados</h1>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit}>
+                            <input type="text" placeholder="nome" onChange={e => setData({ ...data, name: e.target.value })} />
+                            <input type="text" placeholder="email" onChange={e => setData({ ...data, email: e.target.value })} />
+                            <input type="submit" value="cadastrar" />
+                        </form>
+                    )
+
+                    }
+
                 </div>
                 <Link to='/'> Voltar para home!</Link>
             </div>
